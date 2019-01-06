@@ -1,0 +1,65 @@
+# xx-small, x-small, small, medium, large, x-large, xx-large
+
+figure.figsize          : 20, 12
+figure.facecolor: white
+figure.edgecolor: 0.50
+
+figure.subplot.left     : 0.1
+figure.subplot.right    : 0.9
+figure.subplot.bottom   : 0.1
+figure.subplot.top      : 0.9
+figure.subplot.wspace   : 0.25
+figure.subplot.hspace   : 0.3
+
+font.size: 12.0
+
+axes.facecolor          : E5E5E5
+axes.edgecolor          : white
+axes.linewidth          : 1
+axes.grid               : True
+axes.titlesize          : large 
+axes.labelsize          : large
+axes.labelcolor         : 555555
+axes.axisbelow          : True       
+axes.labelpad           : 10.0 
+axes.titlepad           : 10.0
+
+axes.prop_cycle: cycler('color', ['E24A33', '348ABD', '988ED5', '777777', 'FBC15E', '8EBA42', 'FFB5B8'])
+                   # E24A33 : red
+                   # 348ABD : blue
+                   # 988ED5 : purple
+                   # 777777 : gray
+                   # FBC15E : yellow
+                   # 8EBA42 : green
+                   # FFB5B8 : pink
+                   
+axes.formatter.limits : -4, 4
+
+xtick.color          : 555555
+xtick.direction      : out
+xtick.labelsize      : large
+
+ytick.color          : 555555
+ytick.direction      : out
+ytick.labelsize      : large
+
+grid.color           : white
+grid.linestyle       : -
+
+legend.facecolor     : white
+legend.fancybox      : True
+legend.shadow        : True
+legend.markerscale   : 1.3 
+
+
+lines.linewidth   : 1.8    
+lines.linestyle   : -  
+lines.markersize  : 5  
+
+
+axes.spines.left   : False   # display axis spines
+axes.spines.bottom : False
+axes.spines.top    : False
+axes.spines.right  : False
+
+errorbar.capsize : 3
