@@ -1,9 +1,7 @@
 .idea/
+*.pdf
+*nc
+__pycache__/
 inca/
 brouillon.py
-inca.an2006-2011.nc
-fluxstoke.an2017.m01.nc
-2012-2017.nc
 todo.txt
-qwidget/__pycache__/
-util/__pycache__/

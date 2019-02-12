@@ -100,6 +100,11 @@ class App(QMainWindow):
         ext_code.setShortcut('Ctrl+O')
         ext_code.triggered.connect(self.extract_code)
         file_menu.addAction(ext_code)
+        file_menu = menubar.addMenu('Data')
+        sc_data = QAction('Sc&ale\t', self)
+        sc_data.setShortcut('Ctrl+A')
+        sc_data.triggered.connect(self.scale_data)
+        file_menu.addAction(sc_data)
 
     def change_vars(self):
         """
@@ -325,10 +330,22 @@ class App(QMainWindow):
     def auto_range(self):
         viz = self.viz
         level_tree = self.adactions_box.levels_tree
-        viz.ranges['X-axis'][0] = viz.abs_var.min().values
-        viz.ranges['X-axis'][1] = viz.abs_var.max().values
-        viz.ranges['Y-axis'][0] = viz.ord_var.min().values
-        viz.ranges['Y-axis'][1] = viz.ord_var.max().values
+        dict_slices = self.get_dict_slices()
+        if viz.var.name == viz.abs_name:
+            viz.ranges['X-axis'][0] = viz.abs_var.min().values
+            viz.ranges['X-axis'][1] = viz.abs_var.max().values
+            viz.ranges['Y-axis'][0] = viz.ord_var[dict_slices[viz.ord_name]].min().values
+            viz.ranges['Y-axis'][1] = viz.ord_var[dict_slices[viz.ord_name]].max().values
+        elif viz.var.name == viz.ord_name:
+            viz.ranges['X-axis'][0] = viz.abs_var[dict_slices[viz.abs_name]].min().values
+            viz.ranges['X-axis'][1] = viz.abs_var[dict_slices[viz.abs_name]].max().values
+            viz.ranges['Y-axis'][0] = viz.ord_var.min().values
+            viz.ranges['Y-axis'][1] = viz.ord_var.max().values
+        else:
+            viz.ranges['X-axis'][0] = viz.abs_var[dict_slices[viz.abs_name]].min().values
+            viz.ranges['X-axis'][1] = viz.abs_var[dict_slices[viz.abs_name]].max().values
+            viz.ranges['Y-axis'][0] = viz.ord_var[dict_slices[viz.ord_name]].min().values
+            viz.ranges['Y-axis'][1] = viz.ord_var[dict_slices[viz.ord_name]].max().values
         level_tree.range_x.setText(1, dsp_fmt(viz.ranges['X-axis'][0]))
         level_tree.range_x.setText(2, dsp_fmt(viz.ranges['X-axis'][1]))
         level_tree.range_y.setText(1, dsp_fmt(viz.ranges['Y-axis'][0]))
@@ -402,4 +419,16 @@ class App(QMainWindow):
             else:
                 print('Figure saved to {}'.format(fname))
                 self.viz.figure.savefig(fname)
+
+    def scale_data(self):
+        num, ok = QInputDialog.getDouble(self, "Scale number", "Enter the float scale number :")
+        if ok:
+            self.viz.var = num * self.viz.var
+            self.viz.var_plotted = num * self.viz.var_plotted
+            if self.viz.ord_name == self.viz.var.name:
+                self.viz.ord_var = num * self.viz.ord_var
+            elif self.viz.abs_name == self.viz.var.name:
+                self.viz.abs_var = num * self.viz.abs_var
+            self.viz.plot()
+            self.refresh_plotinfos()
 

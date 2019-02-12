@@ -18,7 +18,7 @@ class VarsGroupBox(QGroupBox):
         self.vars_names = vars_names
         self.vars_hlay = QGridLayout(self)
         self.vars_buttons = {}
-        self.nline = 4
+        self.nline = 8
         nb_var_buttons = 0
         for var in self.vars_names:
             self.vars_buttons[var] = QPushButton(var, self)
@@ -72,7 +72,7 @@ class DimsGroupBox(QGroupBox):
             text2 = "Ordinate selected : {}".format(self.ord)
             self.label2 = QLabel(text2)
             self.layout.addWidget(self.label1, 0, 0)
-            self.layout.addWidget(self.label2, 1, 0)
+            self.layout.addWidget(self.label2, 0, 1)
 
 
 class VarInfosGroupBox(QGroupBox):
@@ -184,11 +184,11 @@ class BasicActionsGroupBox(QGroupBox):
         super(QGroupBox, self).__init__('Basic Actions', parent)
         self.layout = QGridLayout(self)
         self.button_swap = QPushButton('Swap axes', self)
-        self.button_invertx = QPushButton('Invert\nX-axis', self)
-        self.button_inverty = QPushButton('Invert\nY-axis', self)
+        self.button_invertx = QPushButton('Invert X-axis', self)
+        self.button_inverty = QPushButton('Invert Y-axis', self)
         self.layout.addWidget(self.button_swap, 0, 0)
-        self.layout.addWidget(self.button_invertx, 1, 0)
-        self.layout.addWidget(self.button_inverty, 1, 1)
+        self.layout.addWidget(self.button_invertx, 0, 1)
+        self.layout.addWidget(self.button_inverty, 0, 2)
         self.button_invertx.setCheckable(True)
         self.button_inverty.setCheckable(True)
 
@@ -338,8 +338,6 @@ class CustomPlotGroupBox(QGroupBox):
         self.layout.addWidget(self.reset_button, 2, 0)
         self.layout.addWidget(self.apply_button, 2, 1)
         self.reset_button.clicked.connect(self.reset_all_slices)
-        # for item in self.dimsgif.qcheckboxes.values():
-        #     item.toggled.connect(self.reset_dim_slices)
 
     def reset_all_slices(self):
         self.tree.slices = {self.var.dims[i]: [0, self.var.coords[self.var.dims[i]].shape[0] - 1, 1]

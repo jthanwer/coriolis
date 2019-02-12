@@ -6,7 +6,7 @@ from qwidget.qgboxes import *
 
 class PlotCanvas(FigureCanvas):
     def __init__(self, var, width, height):
-        self.dpi = 200
+        self.dpi = 100
         fig = Figure(figsize=(width/(2 * self.dpi), height/(2 * self.dpi)), dpi=self.dpi)
         FigureCanvas.__init__(self, fig)
         self.updateGeometry()
@@ -60,7 +60,7 @@ class PlotCanvas(FigureCanvas):
             ax.invert_yaxis()
         ax.set_title(self.var.name)
         ax.set_xlabel(self.abs_name)
-        ax.set_ylabel(self.var.name)
+        ax.set_ylabel(self.ord_name)
         self.draw()
 
     def plot_2d(self):
