@@ -1,12 +1,13 @@
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib.colors as colors
-from qwidget.qgboxes import *
+import cartopy.crs as ccrs
+from coriolis.qwidget.qgboxes import *
 
 
 class PlotCanvas(FigureCanvas):
     def __init__(self, var, width, height):
-        self.dpi = 100
+        self.dpi = 80
         fig = Figure(figsize=(width/(2 * self.dpi), height/(2 * self.dpi)), dpi=self.dpi)
         FigureCanvas.__init__(self, fig)
         self.updateGeometry()
@@ -19,14 +20,17 @@ class PlotCanvas(FigureCanvas):
         self.ord_var = self.var
         self.slices = {self.var.dims[i]: [0, var.coords[self.var.dims[i]].shape[0] - 1, 1]
                        for i in range(len(self.var.dims))}
-        self.options = {'plot_type': '1d', 'isx_inverted': False, 'isy_inverted': False,
-                        'x_scale': 'linear', 'y_scale': 'linear', 'cbar': 'linear',
-                        'contourf': False}
-        self.vmin_cbar = self.var_plotted.min().values
-        self.vmax_cbar = self.var_plotted.max().values
+        self.options = dict(plot_type='1d', isx_inverted=False, isy_inverted=False,
+                            x_scale='linear', y_scale='linear', cbar_scale='linear',
+                            contourf=False, map=False, cmap='viridis')
+        self.stats = {'mean': self.var_plotted.mean(skipna=True).values,
+                      'std': self.var_plotted.std(skipna=True).values,
+                      'min': self.var_plotted.min(skipna=True).values,
+                      'max': self.var_plotted.max(skipna=True).values}
         self.ranges = {'X-axis': [self.abs_var.min().values, self.abs_var.max().values],
-                       'Y-axis': [self.vmin_cbar, self.vmax_cbar],
-                       'Colorbar': [self.vmin_cbar, self.vmax_cbar]}
+                       'Y-axis': [self.stats['min'], self.stats['max']],
+                       'Colorbar': [self.stats['min'], self.stats['max']]}
+        self.var_plotted = self.var_resizing()
         self.plot()
 
     def plot(self):
@@ -64,44 +68,30 @@ class PlotCanvas(FigureCanvas):
         self.draw()
 
     def plot_2d(self):
-        self.options['plot_type'] = '2d'
-        ax = self.figure.add_subplot(111)
-        abs_slices = self.slices[self.abs_name]
-        ord_slices = self.slices[self.ord_name]
-        abs_plot = self.abs_var[abs_slices[0]: abs_slices[1] + 1: abs_slices[2]]
-        ord_plot = self.ord_var[ord_slices[0]: ord_slices[1] + 1: ord_slices[2]]
+        opts = self.options
+        opts['plot_type'] = '2d'
         self.var_plotted = self.var_resizing()
-        abs_plot2d, ord_plot2d = np.meshgrid(abs_plot, ord_plot)
         vmin = self.ranges['Colorbar'][0]
         vmax = self.ranges['Colorbar'][1]
-        try:
-            if self.options['cbar'] == 'linear':
-                img = ax.pcolormesh(abs_plot2d, ord_plot2d, self.var_plotted,
-                                    vmin=vmin, vmax=vmax)
-            else:
-                img = ax.pcolormesh(abs_plot2d, ord_plot2d, self.var_plotted,
-                                    norm=colors.LogNorm(vmin=vmin, vmax=vmax))
-        except TypeError:
-            if self.options['cbar'] == 'linear':
-                img = ax.pcolormesh(abs_plot2d, ord_plot2d, np.swapaxes(self.var_plotted, 0, 1),
-                                    vmin=vmin, vmax=vmax)
-            else:
-                img = ax.pcolormesh(abs_plot2d, ord_plot2d, np.swapaxes(self.var_plotted, 0, 1),
-                                    norm=colors.LogNorm(vmin=vmin, vmax=vmax))
-        if self.options['x_scale'] != 'linear':
-            ax.set_xscale(self.options['x_scale'])
-        if self.options['y_scale'] != 'linear':
-            ax.set_yscale(self.options['y_scale'])
+        if opts['map']:
+            ax = self.figure.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
+            ax.coastlines()
+        else:
+            ax = self.figure.add_subplot(111)
+        if opts['cbar_scale'] == 'linear':
+            self.var_plotted.plot.pcolormesh(self.abs_name, self.ord_name,
+                                             ax=ax, vmin=vmin, vmax=vmax, cmap=plt.get_cmap(opts['cmap']))
+        elif opts['cbar_scale'] == 'log':
+            self.var_plotted.plot.pcolormesh(self.abs_name, self.ord_name,
+                                             ax=ax, norm=colors.LogNorm(vmin=vmin, vmax=vmax),
+                                             cmap=plt.get_cmap(opts['cmap']))
         ax.set_xlim(self.ranges['X-axis'][0], self.ranges['X-axis'][1])
         ax.set_ylim(self.ranges['Y-axis'][0], self.ranges['Y-axis'][1])
-        if self.options['isx_inverted']:
-            ax.invert_xaxis()
-        if self.options['isy_inverted']:
-            ax.invert_yaxis()
-        ax.set_title(self.var.name)
-        ax.set_xlabel(self.abs_name)
-        ax.set_ylabel(self.ord_name)
-        self.figure.colorbar(img)
+        ax.set_xscale(opts['x_scale']) if opts['x_scale'] != 'linear' else None
+        ax.set_yscale(opts['y_scale']) if opts['y_scale'] != 'linear' else None
+        ax.invert_xaxis() if opts['isx_inverted'] else None
+        ax.invert_yaxis() if opts['isy_inverted'] else None
+
         self.draw()
 
     def var_resizing(self):

@@ -17,14 +17,14 @@ def extract_code(fname, viz, path):
         code += 'vmin = {}\n'.format(viz.ranges['Colorbar'][0])
         code += 'vmax = {}\n'.format(viz.ranges['Colorbar'][1])
         code += 'try:\n'
-        if viz.options['cbar'] == 'linear':
+        if viz.options['cbar_scale'] == 'linear':
             code += '\timg = ax.pcolormesh(abs_plot2d, ord_plot2d, var_plotted, ' \
                     'vmin=vmin, vmax=vmax)\n'
         else:
             code += '\timg = ax.pcolormesh(abs_plot2d, ord_plot2d, viz.var_plotted, ' \
                     'norm=colors.LogNorm(vmin=vmin, vmax=vmax))\n'
         code += 'except TypeError:'
-        if viz.options['cbar'] == 'linear':
+        if viz.options['cbar_scale'] == 'linear':
             code += 'img = ax.pcolormesh(abs_plot2d, ord_plot2d, np.swapaxes(viz.var_plotted, 0, 1), ' \
                 'vmin=vmin, vmax=vmax)\n'
         else:

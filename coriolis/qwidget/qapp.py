@@ -17,14 +17,14 @@ class App(QMainWindow):
 
         self.viz = PlotCanvas(self.ds[self.vars_name[0]], self.w, self.h)
         self.main_widget = QWidget(self)
-        self.vars_box = VarsGroupBox(self.vars_name, self.main_widget)
-        self.dimselect_box = DimsGroupBox(self.viz.var, parent=self.main_widget)
-        self.var_infos_box = VarInfosGroupBox(self.viz.var, self.main_widget)
-        self.plot_infos_box = PlotInfosGroupBox(self.viz, self.main_widget)
-        self.bactions_box = BasicActionsGroupBox(self.main_widget)
-        self.adactions_box = AdvancedActionsGroupBox(self.viz, self.main_widget)
-        self.cusplot_box = CustomPlotGroupBox(self.viz.var, self.viz.abs_name, self.viz.ord_name, self.main_widget)
-        self.dimstable_box = DimsTableGroupBox(self.viz.var, self.main_widget)
+        self.vars_box = VarsGroupBox(self.vars_name, self)
+        self.dimselect_box = DimsGroupBox(self.viz.var, parent=self)
+        self.var_infos_box = VarInfosGroupBox(self.viz.var, self)
+        self.plot_infos_box = PlotInfosGroupBox(self.viz, self)
+        self.bactions_box = BasicActionsGroupBox(self)
+        self.adactions_box = AdvancedActionsGroupBox(self.viz, self)
+        self.cusplot_box = CustomPlotGroupBox(self.viz.var, self.viz.abs_name, self.viz.ord_name, self)
+        self.dimstable_box = DimsTableGroupBox(self.viz.var, self)
         self.layout = QGridLayout(self.main_widget)
         self.init_ui()
 
@@ -32,7 +32,7 @@ class App(QMainWindow):
         """
         Initialize the window with the multiple widgets
         """
-        self.setWindowTitle("Coriolis")
+        self.setWindowTitle("Coriolis {}".format(os.path.basename(self.path)))
         # super(FigureCanvas, self.viz).setFixedSize(2500, 1200)
         # self.setFixedSize(3700, 2000)
         self.width = self.frameGeometry().width()
@@ -131,6 +131,7 @@ class App(QMainWindow):
         self.adactions_box.log_yaxis_but.setEnabled(False)
         if self.viz.options['plot_type'] == '2d':
             self.adactions_box.log_cbar_but.setEnabled(False)
+            self.adactions_box.cmap_cbox.setEnabled(False)
         self.adactions_box.auto_range.setEnabled(False)
         self.adactions_box.apply_ranges.setEnabled(False)
 
@@ -187,6 +188,10 @@ class App(QMainWindow):
             viz.ord_var = viz.var.coords[viz.ord_name]
         self.viz.slices = self.cusplot_box.tree.slices
         viz.var_plotted = self.viz.var_resizing()
+        viz.stats = {'mean': viz.var_plotted.mean(skipna=True).values,
+                     'std': viz.var_plotted.std(skipna=True).values,
+                     'min': viz.var_plotted.min(skipna=True).values,
+                     'max': viz.var_plotted.max(skipna=True).values}
         for button in dims_selection.dim_buttons.values():
             button.setChecked(False)
         self.cusplot_box.apply_button.setEnabled(True)
@@ -198,9 +203,12 @@ class App(QMainWindow):
         """
         self.viz.slices = self.cusplot_box.tree.slices
         self.viz.ranges = self.adactions_box.levels_tree.ranges
-        self.viz.plot()
+        self.viz.stats = {'mean': self.viz.var_plotted.mean(skipna=True).values,
+                          'std': self.viz.var_plotted.std(skipna=True).values,
+                          'min': self.viz.var_plotted.min(skipna=True).values,
+                          'max': self.viz.var_plotted.max(skipna=True).values}
         self.refresh_plotinfos()
-        self.show()
+        self.viz.plot()
 
     def change_slices(self):
         """
@@ -235,8 +243,6 @@ class App(QMainWindow):
         spin_value = dimsgif.qspinboxes[dim_selec].value()
         dict_slices = self.get_dict_slices()
         dict_slices[dim_selec] = slice(0, self.viz.var.coords[dim_selec].shape[0], 1)
-        # self.viz.vmin_cbar = self.viz.var[dict_slices].min(skipna=True).values
-        # self.viz.vmax_cbar = self.viz.var[dict_slices].max(skipna=True).values
         while dimsgif.animation_but.isChecked():
             pace_value = dimsgif.slider_pace.value()
             dimsgif.qspinboxes[dim_selec].setValue(spin_value)
@@ -247,35 +253,35 @@ class App(QMainWindow):
     def refresh_dims(self):
         self.dimselect_box.layout.removeWidget(self.dimselect_box.dims_selection)
         self.dimselect_box.dims_selection.deleteLater()
-        self.dimselect_box.dims_selection = self.dimselect_box.DimsSelection(self.viz.var, self.main_widget)
+        self.dimselect_box.dims_selection = self.dimselect_box.DimsSelection(self.viz.var, self)
         self.dimselect_box.layout.addWidget(self.dimselect_box.dims_selection, 0, 0)
         self.show()
 
     def refresh_selec_dims(self, abscissa, ordinate):
         self.dimselect_box.layout.removeWidget(self.dimselect_box.dims_selected)
         self.dimselect_box.dims_selected.deleteLater()
-        self.dimselect_box.dims_selected = self.dimselect_box.DimsSelected(abscissa, ordinate, self.main_widget)
+        self.dimselect_box.dims_selected = self.dimselect_box.DimsSelected(abscissa, ordinate, self)
         self.dimselect_box.layout.addWidget(self.dimselect_box.dims_selected, 1, 0)
         self.show()
 
     def refresh_varinfos(self):
         self.layout.removeWidget(self.var_infos_box)
         self.var_infos_box.deleteLater()
-        self.var_infos_box = VarInfosGroupBox(self.viz.var, self.main_widget)
+        self.var_infos_box = VarInfosGroupBox(self.viz.var, self)
         self.layout.addWidget(self.var_infos_box, 1, 3, 3, 1)
         self.show()
 
     def refresh_plotinfos(self):
         self.layout.removeWidget(self.plot_infos_box)
         self.plot_infos_box.deleteLater()
-        self.plot_infos_box = PlotInfosGroupBox(self.viz, self.main_widget)
+        self.plot_infos_box = PlotInfosGroupBox(self.viz, self)
         self.layout.addWidget(self.plot_infos_box, 0, 3)
         self.show()
 
     def refresh_adactions(self):
         self.layout.removeWidget(self.adactions_box)
         self.adactions_box.deleteLater()
-        self.adactions_box = AdvancedActionsGroupBox(self.viz, self.main_widget)
+        self.adactions_box = AdvancedActionsGroupBox(self.viz, self)
         self.layout.addWidget(self.adactions_box, 1, 1, 3, 1)
         self.show()
 
@@ -314,7 +320,7 @@ class App(QMainWindow):
     def refresh_dimstable(self):
         self.layout.removeWidget(self.dimstable_box)
         self.dimstable_box.deleteLater()
-        self.dimstable_box = DimsTableGroupBox(self.viz.var, self.main_widget)
+        self.dimstable_box = DimsTableGroupBox(self.viz.var, self)
         self.layout.addWidget(self.dimstable_box, 0, 4, 4, 1)
         self.show()
 
@@ -331,16 +337,18 @@ class App(QMainWindow):
         viz = self.viz
         level_tree = self.adactions_box.levels_tree
         dict_slices = self.get_dict_slices()
+        min_val = viz.var_plotted.min().values
+        max_val = viz.var_plotted.max().values
         if viz.var.name == viz.abs_name:
-            viz.ranges['X-axis'][0] = viz.abs_var.min().values
-            viz.ranges['X-axis'][1] = viz.abs_var.max().values
+            viz.ranges['X-axis'][0] = min_val * 3/4 - max_val * 1/4
+            viz.ranges['X-axis'][1] = min_val * 1/4 + max_val * 5/4
             viz.ranges['Y-axis'][0] = viz.ord_var[dict_slices[viz.ord_name]].min().values
             viz.ranges['Y-axis'][1] = viz.ord_var[dict_slices[viz.ord_name]].max().values
         elif viz.var.name == viz.ord_name:
             viz.ranges['X-axis'][0] = viz.abs_var[dict_slices[viz.abs_name]].min().values
             viz.ranges['X-axis'][1] = viz.abs_var[dict_slices[viz.abs_name]].max().values
-            viz.ranges['Y-axis'][0] = viz.ord_var.min().values
-            viz.ranges['Y-axis'][1] = viz.ord_var.max().values
+            viz.ranges['Y-axis'][0] = min_val * 3/4 - max_val * 1/4
+            viz.ranges['Y-axis'][1] = min_val * 1/4 + max_val * 5/4
         else:
             viz.ranges['X-axis'][0] = viz.abs_var[dict_slices[viz.abs_name]].min().values
             viz.ranges['X-axis'][1] = viz.abs_var[dict_slices[viz.abs_name]].max().values
@@ -350,8 +358,8 @@ class App(QMainWindow):
         level_tree.range_x.setText(2, dsp_fmt(viz.ranges['X-axis'][1]))
         level_tree.range_y.setText(1, dsp_fmt(viz.ranges['Y-axis'][0]))
         level_tree.range_y.setText(2, dsp_fmt(viz.ranges['Y-axis'][1]))
-        viz.ranges['Colorbar'][0] = viz.var_plotted.min(skipna=True).values
-        viz.ranges['Colorbar'][1] = viz.var_plotted.max(skipna=True).values
+        viz.ranges['Colorbar'][0] = viz.stats['min']
+        viz.ranges['Colorbar'][1] = viz.stats['max']
         level_tree.cbar.setText(1, dsp_fmt(viz.ranges['Colorbar'][0]))
         level_tree.cbar.setText(2, dsp_fmt(viz.ranges['Colorbar'][1]))
         viz.plot()

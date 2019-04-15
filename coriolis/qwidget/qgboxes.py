@@ -3,6 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtTest import QTest
 from util.format import dsp_fmt, dims_fmt, analyse_fmt
+from util.analyze_dims import detect_grid
 import matplotlib.pyplot as plt
 import xarray as xr
 import numpy as np
@@ -72,7 +73,7 @@ class DimsGroupBox(QGroupBox):
             text2 = "Ordinate selected : {}".format(self.ord)
             self.label2 = QLabel(text2)
             self.layout.addWidget(self.label1, 0, 0)
-            self.layout.addWidget(self.label2, 0, 1)
+            self.layout.addWidget(self.label2, 1, 0)
 
 
 class VarInfosGroupBox(QGroupBox):
@@ -90,6 +91,8 @@ class VarInfosGroupBox(QGroupBox):
         tree = QTreeWidget()
         tree.headerItem().setText(0, 'Name')
         tree.headerItem().setText(1, 'Value')
+        tree.headerItem().setTextAlignment(0, Qt.AlignHCenter)
+        tree.headerItem().setTextAlignment(1, Qt.AlignHCenter)
         variable = QTreeWidgetItem(tree)
         variable.setText(0, 'Variable')
         variable.setText(1, var.name)
@@ -128,15 +131,18 @@ class PlotInfosGroupBox(QGroupBox):
         super(QGroupBox, self).__init__('Plot Information', parent)
         self.layout = QVBoxLayout(self)
         ax = viz.figure.axes[0]
-        self.statistics = {'Mean': dsp_fmt(viz.var_plotted.mean(skipna=True).values),
-                           'Std': dsp_fmt(viz.var_plotted.std(skipna=True).values),
-                           'Max': dsp_fmt(viz.var_plotted.max(skipna=True).values),
-                           'Min': dsp_fmt(viz.var_plotted.min(skipna=True).values)
+        self.statistics = {'Mean': dsp_fmt(viz.stats['mean']),
+                           'Std': dsp_fmt(viz.stats['std']),
+                           'Max': dsp_fmt(viz.stats['max']),
+                           'Min': dsp_fmt(viz.stats['min'])
                            }
         tree = QTreeWidget()
         tree.headerItem().setText(0, 'Name')
         tree.headerItem().setText(1, 'Value 1')
         tree.headerItem().setText(2, 'Value 2')
+        tree.headerItem().setTextAlignment(0, Qt.AlignHCenter)
+        tree.headerItem().setTextAlignment(1, Qt.AlignHCenter)
+        tree.headerItem().setTextAlignment(2, Qt.AlignHCenter)
         variable = QTreeWidgetItem(tree)
         variable.setText(0, 'Variable')
         variable.setText(1, viz.var.name)
@@ -171,7 +177,6 @@ class PlotInfosGroupBox(QGroupBox):
             child.setText(0, str(stat))
             child.setText(1, str(value))
         tree.resizeColumnToContents(0)
-        # tree.setAlternatingRowColors(True)
 
         self.layout.addWidget(tree)
 
@@ -200,32 +205,48 @@ class AdvancedActionsGroupBox(QGroupBox):
     def __init__(self, viz, parent=None):
         super(QGroupBox, self).__init__('Advanced Actions', parent)
         self.viz = viz
+        self.parent = parent
         self.layout = QGridLayout(self)
         self.auto_range = QPushButton('Auto-Range')
         self.apply_ranges = QPushButton('Apply Ranges\n(from below)')
+        self.map_but = QPushButton('Draw Map')
         self.log_xaxis_but = QPushButton('Log X-axis')
         self.log_xaxis_but.setCheckable(True)
-        if self.viz.options['x_scale'] == 'log':
-            self.log_xaxis_but.setChecked(True)
         self.log_yaxis_but = QPushButton('Log Y-axis')
         self.log_yaxis_but.setCheckable(True)
+
+        if self.viz.options['x_scale'] == 'log':
+            self.log_xaxis_but.setChecked(True)
         if self.viz.options['y_scale'] == 'log':
             self.log_yaxis_but.setChecked(True)
         self.levels_tree = self.LevelsTree(self.viz)
-        self.layout.addWidget(self.auto_range, 0, 0, 1, 3)
-        self.layout.addWidget(self.apply_ranges, 1, 0, 1, 3)
-        self.layout.addWidget(self.levels_tree, 2, 0, 1, 3)
-        self.layout.addWidget(self.log_xaxis_but, 3, 0)
-        self.layout.addWidget(self.log_yaxis_but, 3, 1)
+        self.layout.addWidget(self.auto_range, 1, 0, 1, 3)
+        self.layout.addWidget(self.apply_ranges, 2, 0, 1, 3)
+        self.layout.addWidget(self.levels_tree, 3, 0, 1, 3)
+        self.layout.addWidget(self.log_xaxis_but, 4, 0)
+        self.layout.addWidget(self.log_yaxis_but, 4, 1)
+        if detect_grid(viz):
+            self.layout.addWidget(self.map_but, 5, 0, 1, 3)
+            self.map_but.setCheckable(True)
+            if self.viz.options['map']:
+                self.map_but.setChecked(True)
         if self.viz.options['plot_type'] == '2d':
+            self.cmap_cbox = QComboBox()
+            cmaps = ['viridis', 'plasma', 'OrRd', 'coolwarm',  'gist_rainbow', 'terrain',
+                     'rainbow']
+            for cmap in cmaps:
+                self.cmap_cbox.addItem(cmap)
             self.log_cbar_but = QPushButton('Log Colorbar')
             self.log_cbar_but.setCheckable(True)
-            if self.viz.options['cbar'] == 'log':
+            if self.viz.options['cbar_scale'] == 'log':
                 self.log_cbar_but.setChecked(True)
-            self.layout.addWidget(self.log_cbar_but, 3, 2)
+            self.layout.addWidget(self.cmap_cbox, 0, 0, 1, 3)
+            self.layout.addWidget(self.log_cbar_but, 4, 2)
             self.log_cbar_but.clicked.connect(self.log_cbar)
+            self.cmap_cbox.currentTextChanged.connect(self.select_cbar)
         self.log_xaxis_but.clicked.connect(self.log_xaxis)
         self.log_yaxis_but.clicked.connect(self.log_yaxis)
+        self.map_but.clicked.connect(self.map)
 
     def log_xaxis(self):
         sender = self.sender()
@@ -246,9 +267,22 @@ class AdvancedActionsGroupBox(QGroupBox):
     def log_cbar(self):
         sender = self.sender()
         if sender.isChecked():
-            self.viz.options['cbar'] = 'log'
+            self.viz.options['cbar_scale'] = 'log'
         else:
-            self.viz.options['cbar'] = 'linear'
+            self.viz.options['cbar_scale'] = 'linear'
+        self.viz.plot()
+
+    def map(self):
+        sender = self.sender()
+        self.viz.options['map'] = sender.isChecked()
+        if 'lon' in self.viz.abs_name.lower():
+            self.viz.plot()
+        else:
+            self.parent.swap_axes()
+            self.viz.plot()
+
+    def select_cbar(self, value):
+        self.viz.options['cmap'] = value
         self.viz.plot()
 
     class LevelsTree(QTreeWidget):

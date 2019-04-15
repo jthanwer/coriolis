@@ -5,7 +5,7 @@ def get_style_sheet():
     
     QWidget{
         background-color: #eaf8fb;
-        font:large "Helvetica";
+        font:large "Comic Sans MS";
     }
     
  
@@ -23,7 +23,7 @@ def get_style_sheet():
         padding: 2px;
         border: 1px solid #19232d;
         color: #F0F0F0;
-        font-size:12pt;
+        font-size: 12pt;
     }
     
     QMenuBar:focus {
@@ -38,22 +38,22 @@ def get_style_sheet():
     QMenuBar::item:selected {
         padding: 4px;
         background: transparent;
-        border: 0px solid #32414B;
+        border: 0px solid #148cd2;
     }
 
     QMenuBar::item:pressed {
         padding: 4px;
         border: 0px solid #32414B;
         background-color: #148CD2;
-        color: #F0F0F0;
+        color: white;
         margin-bottom: 0px;
         padding-bottom: 0px;
     }
     
     QMenu {
         border: 0px solid #32414B;
-        color: #F0F0F0;
-        background-color: #a07d26;
+        color: black;
+        background-color: #eaf8fb;
         margin: 0px;
     }
     
@@ -70,11 +70,12 @@ def get_style_sheet():
 
     QMenu::item {
         padding: 4px 24px 4px 24px;
-        border: 1px transparent #32414B;
+        border: 1px transparent #eaf8fb;
     }
 
     QMenu::item:selected {
-        background-color: black;
+        background-color: #148cd2;
+        color: white;
     }
     
     QMenu::indicator {
@@ -90,9 +91,10 @@ def get_style_sheet():
     
     QGroupBox {
         color: #32414b;
-        font-size: 9pt;
-        font-weight: bold;
+        font-size: 10pt;
+        font-weight: bold;     
     }
+    
     
     /* ---------------------------------------------------------------------------- */
     /* CHECK BOXES ---------------------------------------------------------------- */
@@ -101,6 +103,17 @@ def get_style_sheet():
     QCheckBox{
         background-color: #eaf8fb;
         color: black;
+    }
+    
+    QCheckBox::indicator:hover {
+       background-color: white;
+       color: black;
+       border: 2px solid black;
+    }
+    
+    QCheckBox::indicator:checked:pressed {
+       background-color: black;
+    
     }
     
     
@@ -140,7 +153,7 @@ def get_style_sheet():
         border: 2px solid rgb(180, 180, 255);
         padding: 7px 7px 7px 7px;
         border-radius: 10px;
-	margin: 0px 0px 0px 0px;
+        margin: 0px 0px 0px 0px;
     }
 
     QPushButton:checked {
@@ -151,7 +164,33 @@ def get_style_sheet():
         background-color: rgb(180, 180, 255) ;
     }
     
+    /* -----------------------------------------------------------------------------*/
+    /* COMBO BOXES ---------------------------------------------------------------- */
+    /* ---------------------------------------------------------------------------- */
     
+    
+    QComboBox {
+        border: 1px solid #32414B; 
+        border-radius: 4px; 
+        background-color: rgb(240, 240, 255);
+        selection-background-color: rgb(180, 180, 255);
+        color: black;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px; 
+        padding-right: 4px;
+    }
+    
+    QComboBox:disabled {
+        background-color: rgb(240, 240, 255);
+        color: black;
+    }
+    
+
+    QComboBox:on {
+        background-color: rgb(240, 240, 255);
+        color: black;
+    }
     
     
     """

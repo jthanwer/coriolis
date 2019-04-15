@@ -11,7 +11,7 @@ figure.subplot.top      : 0.9
 figure.subplot.wspace   : 0.25
 figure.subplot.hspace   : 0.3
 
-font.size: 12.0
+font.size: 10.0
 
 axes.facecolor          : E5E5E5
 axes.edgecolor          : white
@@ -54,7 +54,7 @@ legend.markerscale   : 1.3
 
 lines.linewidth   : 1.8    
 lines.linestyle   : -  
-lines.markersize  : 5  
+lines.markersize  : 6 
 
 
 axes.spines.left   : False   # display axis spines

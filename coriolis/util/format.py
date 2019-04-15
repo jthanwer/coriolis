@@ -3,6 +3,9 @@ import datetime
 
 
 def dsp_fmt(x):
+    """
+    Format display for numbers
+    """
     if isinstance(x, np.datetime64):
         x = np.datetime64(x)
         x = datetime.datetime.utcfromtimestamp(x.astype('O') / 1e9)
@@ -17,6 +20,9 @@ def dsp_fmt(x):
 
 
 def dims_fmt(x):
+    """
+    Format display for dimensions statistics
+    """
     if np.issubdtype(x.dtype, np.datetime64):
         x = datetime.datetime.utcfromtimestamp(x.astype('O') / 1e9)
         return x.strftime('%Y-%m-%dT%H:%M')

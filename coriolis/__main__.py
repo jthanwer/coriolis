@@ -6,8 +6,13 @@ from util.postproc import exit_app
 from util.style_sheet import get_style_sheet
 from functools import partial
 
+__all__ = []
 
-if __name__ == '__main__':
+
+def main():
+    """
+    Main entry point of Coriolis
+    """
     dataset, file_path = init_app()
     print('......')
 
@@ -24,3 +29,5 @@ if __name__ == '__main__':
     sys.exit(app.exec_())
 
 
+if __name__ == '__main__':
+    main()
