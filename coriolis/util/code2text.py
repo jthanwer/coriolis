@@ -1,4 +1,4 @@
-def extract_code(fname, viz, path):
+def code2text(fname, viz, path):
     code = 'import matplotlib.pyplot as plt\n'
     code += 'import xarray as xr\n\n\n'
     code += 'dataset = xr.open_dataset(\'{}\')'.format(path)

@@ -12,8 +12,7 @@ setup(
     author_email="joel.thanwerdas@gmail.com",
     description="Quick visualization python software for NetCDF files",
     long_description=open('README.md').read(),
-    install_requires=['matplotlib>=3.0.3', 'xarray>=0.11.3',
-                      'netcdf4>=1.4.2', 'PyQt5>=5.12.1'],
+    install_requires=[],
     include_package_data=True,
     url='http://github.com/jthanwer/coriolis',
     classifiers=[

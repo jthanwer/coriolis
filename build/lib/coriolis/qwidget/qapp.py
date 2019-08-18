@@ -1,7 +1,7 @@
 from coriolis.qwidget.qgboxes import *
 from coriolis.qwidget.qviz import *
 import os
-from coriolis.util.extract_code import extract_code
+from coriolis.util.code2text import extract_code
 
 
 class App(QMainWindow):
@@ -30,7 +30,7 @@ class App(QMainWindow):
 
     def init_ui(self):
         """
-        Initialize the window with the multiple widgets
+        Initialize the window with the multiple app
         """
         self.setWindowTitle("Coriolis")
         # super(FigureCanvas, self.viz).setFixedSize(2500, 1200)

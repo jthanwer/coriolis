@@ -11,7 +11,7 @@ import numpy as np
 
 class VarsGroupBox(QGroupBox):
     """
-    Deals with the group of widgets that allow to select the variable.
+    Deals with the group of app that allow to select the variable.
     Display the variables buttons.
     """
     def __init__(self, vars_names, parent=None):
@@ -32,7 +32,7 @@ class VarsGroupBox(QGroupBox):
 
 class DimsGroupBox(QGroupBox):
     """
-    Deals with the group of widgets that allow to select the dimensions to plot.
+    Deals with the group of app that allow to select the dimensions to plot.
     """
     def __init__(self, var, abscissa='None', ordinate='None', parent=None):
         super(QGroupBox, self).__init__('Select Dimensions', parent)
@@ -78,7 +78,7 @@ class DimsGroupBox(QGroupBox):
 
 class VarInfosGroupBox(QGroupBox):
     """
-    Deals with the group of widgets that display some information about the variable selected.
+    Deals with the group of app that display some information about the variable selected.
     """
     def __init__(self, var, parent=None):
         super(QGroupBox, self).__init__('Variable Information', parent)
@@ -125,7 +125,7 @@ class VarInfosGroupBox(QGroupBox):
 
 class PlotInfosGroupBox(QGroupBox):
     """
-    Deals with the group of widgets that display some information about the plot.
+    Deals with the group of app that display some information about the plot.
     """
     def __init__(self, viz, parent=None):
         super(QGroupBox, self).__init__('Plot Information', parent)
@@ -183,7 +183,7 @@ class PlotInfosGroupBox(QGroupBox):
 
 class BasicActionsGroupBox(QGroupBox):
     """
-    Deals with the group of widgets that allows to do basic actions on plot.
+    Deals with the group of app that allows to do basic actions on plot.
     """
     def __init__(self, parent=None):
         super(QGroupBox, self).__init__('Basic Actions', parent)
@@ -200,7 +200,7 @@ class BasicActionsGroupBox(QGroupBox):
 
 class AdvancedActionsGroupBox(QGroupBox):
     """
-    Deals with the group of widgets that allows to do advanced actions on plot.
+    Deals with the group of app that allows to do advanced actions on plot.
     """
     def __init__(self, viz, parent=None):
         super(QGroupBox, self).__init__('Advanced Actions', parent)
@@ -355,7 +355,7 @@ class AdvancedActionsGroupBox(QGroupBox):
 
 class CustomPlotGroupBox(QGroupBox):
     """
-    Deals with the group of widgets that allow to select the slices of data and to launch animation.
+    Deals with the group of app that allow to select the slices of data and to launch animation.
     """
     def __init__(self, var, abs_name, ord_name, parent=None):
         super(QGroupBox, self).__init__('Set the Data', parent)

@@ -66,7 +66,7 @@ def exclude_var(file_path):
 
 def check_type_dim(dataset):
     """
-    Check the dimensions/coords type to be sure if that type is not going to be a problem
+    Check the dimensions/coords type to be sure that type is not going to be a problem
 
     """
 

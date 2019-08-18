@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication
-from qwidget.qapp import App
+from app.app import App
 from util.preproc import init_app
 from util.postproc import exit_app
 from util.style_sheet import get_style_sheet

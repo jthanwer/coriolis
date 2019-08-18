@@ -2,13 +2,12 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib.colors as colors
 import cartopy.crs as ccrs
-from qwidget.qgboxes import *
+from app.widgets.gboxes import *
 
 
 class PlotCanvas(FigureCanvas):
-    def __init__(self, var, width, height):
-        self.dpi = 80
-        fig = Figure(figsize=(width/(2 * self.dpi), height/(2 * self.dpi)), dpi=self.dpi)
+    def __init__(self, var, width, height, dpi=80):
+        fig = Figure(figsize=(width/(2 * dpi), height/(2 * dpi)), dpi=dpi)
         FigureCanvas.__init__(self, fig)
         self.updateGeometry()
         fig.set_tight_layout(True)
