@@ -12,6 +12,7 @@ setup(
     author_email="joel.thanwerdas@gmail.com",
     description="Quick visualization python software for NetCDF files",
     long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
     install_requires=[],
     include_package_data=True,
     url='http://github.com/jthanwer/coriolis',
@@ -21,7 +22,6 @@ setup(
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Natural Language :: French",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.7.3",
         "Topic :: Communications",
     ],
     entry_points={

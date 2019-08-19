@@ -1,9 +1,10 @@
 .idea/
-*.pdf
-*nc
 __pycache__/
+*.pdf
+*.nc
+*.txt
 data/
 dist/
 build/
 *egg.info/
-todo.txt
+
