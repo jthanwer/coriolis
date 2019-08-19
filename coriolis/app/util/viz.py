@@ -1,4 +1,4 @@
-from util.format import *
+from coriolis.util.format import *
 from PyQt5.QtWidgets import QInputDialog
 
 
@@ -90,13 +90,21 @@ def adjust_viz(self):
 
 
 def scale_data(self):
-    num, ok = QInputDialog.getDouble(self, "Scale number", "Enter the float scale number :")
+    num, ok = QInputDialog.getDouble(self, "Scale number", "Enter the float scale number :",
+                                     self.viz.scale, 0, 1e20, 3)
     if ok:
-        self.viz.var = num * self.viz.var
-        self.viz.var_plotted = num * self.viz.var_plotted
-        if self.viz.ord_name == self.viz.var.name:
-            self.viz.ord_var = num * self.viz.ord_var
-        elif self.viz.abs_name == self.viz.var.name:
-            self.viz.abs_var = num * self.viz.abs_var
+        self.viz.scale = num
+        self.viz.var = self.viz.scale * self.viz.var
+        self.viz.var_plotted = self.viz.scale * self.viz.var_plotted
         self.viz.plot()
         self.refresh_plotinfos()
+
+
+def change_dpi(self):
+    num, ok = QInputDialog.getInt(self, "dpi", "Enter the dpi number :",
+                                  self.viz.dpi)
+    if ok:
+        self.viz.dpi = num
+        self.refresh_plotcanvas()
+
+

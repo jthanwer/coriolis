@@ -1,9 +1,9 @@
 import sys
 from PyQt5.QtWidgets import QApplication
-from app.app import App
-from util.preproc import init_app
-from util.postproc import exit_app
-from util.style_sheet import get_style_sheet
+from .app.app import App
+from .util.preproc import init_app
+from .util.postproc import exit_app
+from .util.style_sheet import get_style_sheet
 from functools import partial
 
 __all__ = []

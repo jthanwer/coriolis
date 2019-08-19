@@ -1,10 +1,10 @@
-from app.widgets.gboxes import *
-from app.widgets.viz import *
-from app.widgets.menu import *
-from app.util.refresh import *
-from app.util.viz import *
-from app.util.save import *
-from app.util.extract import *
+from .widgets.gboxes import *
+from .widgets.viz import *
+from .widgets.menu import *
+from .util.refresh import *
+from .util.viz import *
+from .util.save import *
+from .util.extract import *
 import os
 from types import MethodType
 
@@ -35,7 +35,6 @@ class App(QMainWindow):
         self.init_ui()
 
     def initiate_methods(self):
-
         # Refresh app widgets
         self.refresh_plotinfos = MethodType(refresh_plotinfos, self)
         self.refresh_adactions = MethodType(refresh_adactions, self)
@@ -48,14 +47,16 @@ class App(QMainWindow):
         self.delete_cusplot_dimsgif = MethodType(delete_cusplot_dimsgif, self)
         self.reset_dim_slices = MethodType(reset_dim_slices, self)
 
+        self.refresh_plotcanvas = MethodType(refresh_plotcanvas, self)
         self.refresh_data_viz = MethodType(refresh_data_viz, self)
         self.adjust_viz = MethodType(adjust_viz, self)
         self.swap_axes = MethodType(swap_axes, self)
         self.auto_range = MethodType(auto_range, self)
         self.scale_data = MethodType(scale_data, self)
-        self.save_fig = MethodType(save_fig, self)
 
+        self.save_fig = MethodType(save_fig, self)
         self.extract_code = MethodType(extract_code, self)
+        self.change_dpi = MethodType(change_dpi, self)
 
         self.init_menu = MethodType(init_menu, self)
 
@@ -95,12 +96,14 @@ class App(QMainWindow):
         """
         Initialize the mandatory buttons actions
         """
-        self.vars_box.vars_buttons[self.viz.var.name].setChecked(True)
+        # self.vars_box.vars_buttons[self.viz.var.name].setChecked(True)
         self.bactions_box.button_swap.clicked.connect(self.swap_axes)
         self.bactions_box.button_invertx.clicked.connect(self.viz.invert_xaxis)
         self.bactions_box.button_inverty.clicked.connect(self.viz.invert_yaxis)
-        for button in self.vars_box.vars_buttons.values():
-            button.clicked.connect(self.change_vars)
+        # for button in self.vars_box.vars_buttons.values():
+        #     button.clicked.connect(self.change_vars)
+        self.vars_box.var_combo.currentTextChanged.connect(self.change_vars)
+
         for button in self.dimselect_box.dims_selection.dim_buttons.values():
             button.clicked.connect(self.change_dims)
 
@@ -119,12 +122,14 @@ class App(QMainWindow):
             item.toggled.connect(self.reset_dim_slices)
         self.cusplot_box.dimsgif.animation_but.setShortcut('Ctrl+C')
 
-    def change_vars(self):
+    def change_vars(self, value):
         """
         Get the selected variable and change the window
         """
-        sender = self.sender()
-        self.viz.var = self.ds[sender.text()]
+        # sender = self.sender()
+        # self.viz.var = self.ds[sender.text()]
+        self.viz.var = self.ds[value]
+        self.viz.scale = 1.
         self.viz.var_plotted = self.viz.var
         self.refresh_varinfos()
         self.refresh_dims()

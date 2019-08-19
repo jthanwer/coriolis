@@ -1,4 +1,4 @@
-from util.code2text import code2text
+from coriolis.util.code2text import code2text
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
 

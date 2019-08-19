@@ -1,5 +1,32 @@
-from app.widgets.gboxes import *
-from app.widgets.viz import *
+from coriolis.app.widgets.gboxes import *
+from coriolis.app.widgets.viz import *
+
+
+def refresh_plotcanvas(self):
+    """
+    Refresh PlotCanvas when dpi or figsize have been changed
+    """
+    self.layout.removeWidget(self.viz)
+    self.viz.deleteLater()
+    (abs_name, ord_name) = (self.viz.abs_name, self.viz.ord_name)
+    (abs_var, ord_var) = (self.viz.abs_var, self.viz.ord_var)
+    slices = self.viz.slices
+    options = self.viz.options
+    stats = self.viz.stats
+    ranges = self.viz.ranges
+    self.viz = PlotCanvas(self.viz.var, self.viz.w, self.viz.h, self.viz.dpi)
+    self.layout.addWidget(self.viz, 0, 0, 1, 3)
+    (self.viz.abs_name, self.viz.ord_name) = (abs_name, ord_name)
+    (self.viz.abs_var, self.viz.ord_var) = (abs_var, ord_var)
+    self.viz.slices = slices
+    self.viz.options = options
+    self.viz.stats = stats
+    self.viz.ranges = ranges
+    self.viz.var_plotted = self.viz.var_resizing()
+    self.viz.plot()
+    self.show()
+    self.bactions_box.button_invertx.clicked.connect(self.viz.invert_xaxis)
+    self.bactions_box.button_inverty.clicked.connect(self.viz.invert_yaxis)
 
 
 def refresh_dims(self):

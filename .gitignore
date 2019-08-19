@@ -2,6 +2,8 @@
 *.pdf
 *nc
 __pycache__/
-inca/
-brouillon.py
+data/
+dist/
+build/
+*egg.info/
 todo.txt

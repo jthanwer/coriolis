@@ -11,7 +11,7 @@ def dsp_fmt(x):
         x = datetime.datetime.utcfromtimestamp(x.astype('O') / 1e9)
         return x.strftime('%Y-%m-%dT%H:%M')
     else:
-        if -999 < x < 999 and (x < -0.01 or 0.01 < x):
+        if -999 < x < 999 and (x < -1 or 1 < x):
             return '%.1f' % x
         elif x == 0:
             return '0'

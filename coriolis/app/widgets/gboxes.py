@@ -2,9 +2,9 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtTest import QTest
-from util.format import dsp_fmt, dims_fmt, analyse_fmt
-from util.analyze_dims import detect_grid
-from util.analyze_dims import detect_grid
+from coriolis.util.format import dsp_fmt, dims_fmt, analyse_fmt
+from coriolis.util.analyze_dims import detect_grid
+from coriolis.util.analyze_dims import detect_grid
 import matplotlib.pyplot as plt
 import xarray as xr
 import numpy as np
@@ -21,14 +21,20 @@ class VarsGroupBox(QGroupBox):
         self.vars_hlay = QGridLayout(self)
         self.vars_buttons = {}
         self.nline = 4
-        nb_var_buttons = 0
-        for var in self.vars_names:
-            self.vars_buttons[var] = QPushButton(var, self)
-            self.vars_buttons[var].setCheckable(True)
-            self.vars_hlay.addWidget(self.vars_buttons[var], nb_var_buttons // self.nline,
-                                     nb_var_buttons % self.nline)
-            nb_var_buttons += 1
-        self.var_count = 0
+
+        self.var_combo = QComboBox()
+        for var in vars_names:
+            self.var_combo.addItem(var)
+        self.vars_hlay.addWidget(self.var_combo, 0, 0)
+
+        # nb_var_buttons = 0
+        # for var in self.vars_names:
+        #     self.vars_buttons[var] = QPushButton(var, self)
+        #     self.vars_buttons[var].setCheckable(True)
+        #     self.vars_hlay.addWidget(self.vars_buttons[var], nb_var_buttons // self.nline,
+        #                              nb_var_buttons % self.nline)
+        #     nb_var_buttons += 1
+        # self.var_count = 0
 
 
 class DimsGroupBox(QGroupBox):
@@ -87,7 +93,7 @@ class VarInfosGroupBox(QGroupBox):
         self.statistics = {'Mean': dsp_fmt(var.mean(skipna=True).values),
                            'Std': dsp_fmt(var.std(skipna=True).values),
                            'Max': dsp_fmt(var.max(skipna=True).values),
-                           'Min': dsp_fmt(var.min(skipna=True).values)
+                           'Min': dsp_fmt(var.min(skipna=True).values),
                            }
         tree = QTreeWidget()
         tree.headerItem().setText(0, 'Name')
@@ -135,7 +141,8 @@ class PlotInfosGroupBox(QGroupBox):
         self.statistics = {'Mean': dsp_fmt(viz.stats['mean']),
                            'Std': dsp_fmt(viz.stats['std']),
                            'Max': dsp_fmt(viz.stats['max']),
-                           'Min': dsp_fmt(viz.stats['min'])
+                           'Min': dsp_fmt(viz.stats['min']),
+                           'Scale': dsp_fmt(viz.scale),
                            }
         tree = QTreeWidget()
         tree.headerItem().setText(0, 'Name')
